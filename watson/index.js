@@ -1,4 +1,4 @@
-const { assistant, assistantId } = require('../auth');
+const { assistant, assistantId } = require("../auth");
 
 let sessionId;
 
@@ -7,29 +7,49 @@ async function createSession() {
     return sessionId;
   }
 
-  const request = await assistant.createSession({assistantId});
+  const request = await assistant.createSession({ assistantId });
   sessionId = request.result.session_id;
   return sessionId;
 }
 
-async function addMessage (input) {
+async function addMessage(input) {
   let messageSessionId;
   try {
     messageSessionId = await createSession();
-  } catch(err) {
+  } catch (err) {
     sessionId = null;
-    messageSessionId = await createSession()
+    messageSessionId = await createSession();
   }
 
   const message = await assistant.message({
     assistantId,
     sessionId: messageSessionId,
     input: {
-      text: input
-    }
-  })
+      text: input,
+    },
+  });
 
-  return message.result
+  return message.result;
 }
 
-module.exports = { addMessage }
+async function getGreeting() {
+  let messageSessionId;
+  try {
+    messageSessionId = await createSession();
+  } catch (err) {
+    sessionId = null;
+    messageSessionId = await createSession();
+  }
+
+  const message = await assistant.message({
+    assistantId,
+    sessionId: messageSessionId,
+    input: {
+      text: "",
+    },
+  });
+
+  return message.result;
+}
+
+module.exports = { addMessage, getGreeting };
